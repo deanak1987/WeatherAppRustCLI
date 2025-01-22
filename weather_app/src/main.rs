@@ -157,7 +157,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         weather.0.bright_yellow()
     );
     println!(
-        "🌡️ Temperature: {}{:.1}{}",
+        "🌡️  Temperature: {}{:.1}{}",
         if temp <0.0 {"-"} else { ""},
         temp.abs().to_string().bright_green(),
         temp_unit
@@ -171,12 +171,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     println!(
-        "Today's High/Low: {}{:.1}{}/{}{:.1}{}",
+        "🌡️  Today's High/Low: {}{:.1}{}/{}{:.1}{}",
         if temp_max < 0.0 { "-" } else { "" },  
-        response.main.temp_max.abs().to_string().bright_green(),
+        temp_max.abs().to_string().bright_green(),
         temp_unit,
         if temp_min < 0.0 { "-" } else { "" },  
-        response.main.temp_min.abs().to_string().bright_green(),
+        temp_min.abs().to_string().bright_green(),
         temp_unit
     );
 
