@@ -27,6 +27,8 @@ struct WeatherResponse {
 #[derive(Deserialize, Debug)]
 struct Main {
     temp: f64,
+    temp_max: f64,
+    temp_min: f64,
     feels_like: f64,
     humidity: i32,
 }
@@ -116,6 +118,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         kelvin_to_celsius(response.main.temp)
     };
 
+    let temp_max = if args.fahrenheit {
+        kelvin_to_fahrenheit(response.main.temp_max)
+    } else {
+        kelvin_to_celsius(response.main.temp_max)
+    };
+
+    let temp_min = if args.fahrenheit {
+        kelvin_to_fahrenheit(response.main.temp_min)
+    } else {
+        kelvin_to_celsius(response.main.temp_min)
+    };
+
     let feels_like = if args.fahrenheit {
         kelvin_to_fahrenheit(response.main.feels_like)
     } else {
@@ -143,15 +157,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         weather.0.bright_yellow()
     );
     println!(
-        "🌡️ Temperature: {:.1}{}",
-        temp.to_string().bright_green(),
+        "🌡️ Temperature: {}{:.1}{}",
+        if temp <0.0 {"-"} else { ""},
+        temp.abs().to_string().bright_green(),
         temp_unit
     );
+
     println!(
-        "🤔 Feels like: {:.1}{}",
-        feels_like.to_string().bright_green(),
+        "🤔 Feels like: {}{:.1}{}",
+        if feels_like < 0.0 { "-" } else { "" },  
+        feels_like.abs().to_string().bright_green(), 
         temp_unit
     );
+
+    println!(
+        "Today's High/Low: {}{:.1}{}/{}{:.1}{}",
+        if temp_max < 0.0 { "-" } else { "" },  
+        response.main.temp_max.abs().to_string().bright_green(),
+        temp_unit,
+        if temp_min < 0.0 { "-" } else { "" },  
+        response.main.temp_min.abs().to_string().bright_green(),
+        temp_unit
+    );
+
     println!(
         "💧 Humidity: {}%",
         response.main.humidity.to_string().bright_cyan()
@@ -173,6 +201,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "🌇 Sunset: {}\n",
         format_timestamp(response.sys.sunset).bright_yellow()
     );
+
+    
 
     Ok(())
 }
